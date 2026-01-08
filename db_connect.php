@@ -1,7 +1,7 @@
 <?php
 $servername = "localhost";
 $username = "root";
-$password = "NiubiCookies123";
+$password = "";
 $dbname = "cookies_shop";
 
 $conn = new mysqli($servername, $username, $password, $dbname);
