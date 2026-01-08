@@ -1,21 +1,29 @@
 <?php
-// Check if form is submitted
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+include 'db_connect.php'; // Add this line to connect to your DB
 
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $customer_name = htmlspecialchars($_POST['customer_name']);
-    $item_name     = htmlspecialchars($_POST['cookie_name']); // or coffee_name if unchanged
+    $item_name     = htmlspecialchars($_POST['cookie_name']);
     $quantity      = (int) $_POST['quantity'];
 
-    // Store order in cookies (expire in 1 hour)
-    setcookie("customer_name", $customer_name, time() + 3600, "/");
-    setcookie("item_name", $item_name, time() + 3600, "/");
-    setcookie("quantity", $quantity, time() + 3600, "/");
-
+    // NEW: Save to Database
+    $sql = "INSERT INTO orders (customer_name, item_name, quantity) 
+            VALUES ('$customer_name', '$item_name', '$quantity')";
+    
+    if ($conn->query($sql)) {
+        // Optional: still keep cookies for the confirmation page display
+        setcookie("customer_name", $customer_name, time() + 3600, "/");
+        setcookie("item_name", $item_name, time() + 3600, "/");
+        setcookie("quantity", $quantity, time() + 3600, "/");
+    } else {
+        echo "Error saving order: " . $conn->error;
+    }
 } else {
     header("Location: index.php");
     exit();
 }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -58,3 +66,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </body>
 </html>
+
